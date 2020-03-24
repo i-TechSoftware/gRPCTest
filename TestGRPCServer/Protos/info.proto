@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package info;
+
+// The banker service definition.
+service Informer {
+  // Get available ticket count
+  rpc GetServerInformation (google.protobuf.Empty) returns (ServerInformation);
+  // Buy tickets
+  rpc GetServerPing (google.protobuf.Empty) returns (PingResponse);
+}
+
+message ServerInformation {
+    string version = 1;
+}
+
+message PingResponse{
+    int32 pingResponse = 1;
+}

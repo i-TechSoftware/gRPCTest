@@ -1,0 +1,139 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+package Communication;
+
+// The banker service definition.
+service InternalCommunication {
+	rpc StreamRecognitonInfo (stream CancelMessage) returns (stream CommunicationPackgeContainerMessage);
+
+	rpc GetServerConfiruration(google.protobuf.Empty) returns (ServerConfigurationMessage);
+}
+
+
+message CancelMessage{
+	bool IsNeedCancel = 1;
+}
+
+message CommunicationPackgeContainerMessage {
+	repeated PredictedPlateMessage predictedPlates = 1;
+	int64 timeStampOfFrame = 2;
+	string address = 3;
+	string channelId  =4;
+	int32 origImageWidth =5;
+	int32 origImageHeigth =6;
+}
+
+message PredictedPlateMessage{
+	repeated PredictedSymbolMessage predictedSymbols = 1;
+	string percent = 2;
+	string license_plate = 3;
+	string pclass = 4;
+	int32 xmax = 5;
+	int32 ymax = 6;
+	int32 xmin = 7;
+	int32 ymin = 8;
+}
+
+message PredictedSymbolMessage{
+	string percent = 1;
+	string pclass = 2;
+	int32 xmax = 3;
+	int32 ymax = 4;
+	int32 xmin = 5;
+	int32 ymin = 6;
+}
+
+
+message ServerConfigurationMessage{
+	string RecognitionModulePath = 1;
+	int32 RecognitionModulePort = 2;
+	string RecognitionModuleUserName = 3;
+	string RecognitionModulePass = 4;
+	string ConfigurationServerPath = 5;
+	repeated CamConfigurationMessage CamConfigurations = 6;
+	bool DrawBorderAroundPlate = 7;
+	bool DrawInformation = 8;
+	enum _DrawingAngle {
+		TopLeft = 0;
+		TopMiddle = 1;
+		TopRight = 2;
+		MiddleLeft = 3;
+		CenterFrame = 4;
+		MiddleRight = 5;
+		BottomLeft = 6;
+		BottomMiddle = 7;
+		BottomRight = 8;
+	}
+	_DrawingAngle DrawInfoAngleAt = 9;
+	google.protobuf.StringValue Watermark = 10;
+	bool UseWatermark = 11;
+	google.protobuf.StringValue PathToBasePhotoArchive = 12;
+	string Language = 13;
+	google.protobuf.StringValue PathToRegionalRecognitionBase = 14;
+	bool ExcludeRegionRecognition = 15;
+	string DbConnectionString =16;
+}
+
+enum _IdentifierType {
+	GUID = 0;
+	INT = 10;
+	STRING = 20;
+	OTHER = 99;
+	NOT_USE = 9999;
+}
+
+enum _BaseState {
+	Disable = 0;
+	Enable = 1;
+	NotUse = 2;
+}
+
+enum _StreamType{
+	PrimaryStream = 0;
+	SecondaryStream = 1;
+}
+
+
+message CamConfigurationMessage{
+	bool EnableRecognizer = 1;
+	string CamIp = 2;
+	int32 CamPort = 3;
+	string UserName = 4;
+	string Password = 5;
+	enum _TransportType{
+		UDP = 0;
+		TCP = 1;
+	} 
+	_TransportType TransportType = 6;
+	google.protobuf.StringValue TerminaId = 7;
+	_IdentifierType IdentifierTerminalType = 8;
+	string ChannelName = 9;
+	int32 ChannelNum = 10;
+	string ChannelId = 11;
+	repeated StreamContainerMessage StreamArray = 12;
+	bool UseSubStream = 13;
+	google.protobuf.StringValue Description = 14;
+	_BaseState CamState = 15;
+	bool UseMotionRecognition = 16;
+	bool UseRecognitionMask = 17;
+	repeated PointMessage MaskPoints = 18;
+	int32 FrameBufferSize = 19;
+	int32 MotionDetectThreshold = 20;
+	int32 MotionDetectPixelThreshold = 21;
+	bool UseRecognitionOnlyIFrameWhenMotionDetectDisabled = 22;
+	int32 SaveToDBGap = 23;
+}
+
+message StreamContainerMessage{
+	string StreamPath = 1;
+	_StreamType StreamType = 2;
+	_BaseState StreamState = 3;
+}
+
+message PointMessage{
+	int32 x = 1;
+	int32 y = 2;
+}
